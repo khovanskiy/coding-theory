@@ -1,7 +1,11 @@
 package com.khovanskiy.coding;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * @author victor
@@ -21,12 +25,13 @@ public class Main {
 
     private static int minDistance(int[][] a) {
         int min = Integer.MAX_VALUE;
-        for (int i = 0; i < a.length; ++i) {
-            for (int j = i + 1; j < a.length; ++j) {
-                int d = distance(a[i], a[j]);
-                if (d < min) {
-                    min = d;
-                }
+        int k = a.length;
+        int[][] m = words(k);
+        for (int i = 1; i < k; ++i) {
+            int[] c = mul(m[i], a);
+            int d = w(c);
+            if (d < min) {
+                min = d;
             }
         }
         return min;
@@ -117,13 +122,106 @@ public class Main {
         }
     }
 
+    private static void print(Map<int[], int[]> a) {
+        for (Map.Entry<int[], int[]> entry : a.entrySet()) {
+            System.out.println(Arrays.toString(entry.getKey()) + "=" + Arrays.toString(entry.getValue()));
+        }
+    }
+
+    private static int[][] transpose(int[][] a) {
+        int k = a.length;
+        assert a.length > 0;
+        int n = a[0].length;
+        int[][] b = new int[n][k];
+        for (int i = 0; i < k; ++i) {
+            for (int j = 0; j < n; ++j) {
+                b[j][i] = a[i][j];
+            }
+        }
+        return b;
+    }
+
+    private static int[] mul(int[] v, int[][] a) {
+        assert v.length == a.length;
+        int[] b = new int[a[0].length];
+        for (int i = 0; i < a[0].length; ++i) {
+            for (int j = 0; j < v.length; ++j) {
+                b[i] += v[j] * a[j][i];
+            }
+            b[i] %= 2;
+        }
+        return b;
+    }
+
+    private static int[] inc(int[] v) {
+        int c = 1;
+        int[] b = new int[v.length];
+        for (int i = v.length - 1; i >= 0; --i) {
+            int t = (v[i] + c) % 2;
+            int q = (v[i] + c) / 2;
+            b[i] = t;
+            c = q;
+        }
+        return b;
+    }
+
+    private static int[][] words(int r) {
+        int[][] a = new int[1 << r][r];
+        for (int i = 1; i < (1 << r); ++i) {
+            a[i] = inc(a[i - 1]);
+        }
+        return a;
+    }
+
+    private static int w(int[] a) {
+        int count = 0;
+        for (int i = 0; i < a.length; ++i) {
+            if (a[i] > 0) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    private static Map<int[], int[]> syndroms(int[][] h) {
+        h = transpose(h);
+        int r = h.length;
+        int n = h[0].length;
+        int[][] errs = words(r);
+        Map<int[], int[]> b = new HashMap<>();
+        Set<String> cache = new HashSet<>();
+        //int[][] b = new int[errs.length][h[0].length];
+        for (int i = 0; i < errs.length; ++i) {
+            int[] val = errs[i];
+            int[] key = mul(val, h);
+            if (!cache.contains(Arrays.toString(key))) {
+                b.put(key, val);
+                cache.add(Arrays.toString(key));
+            }
+        }
+        return b;
+    }
+
     public static void main(String[] arg) {
         int[][] a = {
                 {1, 1, 0, 1, 0, 0, 0, 1, 0, 0},
                 {1, 1, 0, 0, 1, 1, 0, 1, 1, 1},
                 {0, 1, 1, 0, 1, 1, 1, 1, 0, 0},
                 {0, 1, 0, 1, 0, 1, 1, 0, 0, 1}
-        };
+        };/**/
+        /*int[][] a = {
+                {1, 0, 1, 0, 0, 1, 1, 0, 1, 1},
+                {0, 0, 1, 0, 1, 0, 1, 1, 1, 0},
+                {0, 0, 0, 1, 0, 1, 1, 0, 1, 0},
+                {1, 1, 0, 1, 0, 0, 0, 1, 1, 0}
+        };/**/
+        /*int[][] a = {
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}
+        };/**/
+        //print(words(4));
         print(a);
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNext()) {
@@ -143,7 +241,7 @@ public class Main {
                         break;
                     }
                     case "speed": {
-                        System.out.println("R = " + ((float)a.length / (float)a[0].length));
+                        System.out.println("R = " + ((float) a.length / (float) a[0].length));
                         break;
                     }
                     case "min": {
@@ -157,6 +255,10 @@ public class Main {
                     case "check": {
                         System.out.println("G = (I P) " + checkIP(a));
                         System.out.println("G = (P^T I) " + checkPI(a));
+                        break;
+                    }
+                    case "syndroms": {
+                        print(syndroms(a));
                         break;
                     }
                     case "exit": {
