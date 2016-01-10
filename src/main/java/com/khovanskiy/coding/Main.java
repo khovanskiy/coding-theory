@@ -1,18 +1,13 @@
 package com.khovanskiy.coding;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author victor
  */
 public class Main {
 
-    private static int distance(int[] a, int[] b) {
+    public static int distance(int[] a, int[] b) {
         assert a.length == b.length;
         int count = 0;
         for (int i = 0; i < a.length; ++i) {
@@ -23,12 +18,13 @@ public class Main {
         return count;
     }
 
-    private static int minDistance(int[][] a) {
+    public static int minDistance(int[][] a) {
         int min = Integer.MAX_VALUE;
         int k = a.length;
         int[][] m = words(k);
-        for (int i = 1; i < k; ++i) {
+        for (int i = 1; i < m.length; ++i) {
             int[] c = mul(m[i], a);
+            System.out.println(Arrays.toString(m[i]) + " | " + Arrays.toString(c));
             int d = w(c);
             if (d < min) {
                 min = d;
@@ -37,7 +33,7 @@ public class Main {
         return min;
     }
 
-    private static int[][] swap(int[][] a, int i, int j) {
+    public static int[][] swap(int[][] a, int i, int j) {
         assert i >= 0 && i < a.length;
         assert j >= 0 && j < a.length;
         int[] temp = a[i];
@@ -46,7 +42,7 @@ public class Main {
         return a;
     }
 
-    private static int[][] sub(int[][] a, int i, int j, int q) {
+    public static int[][] sub(int[][] a, int i, int j, int q) {
         assert i >= 0 && i < a.length;
         assert j >= 0 && j < a.length;
         for (int k = 0; k < a[i].length; ++k) {
@@ -55,7 +51,16 @@ public class Main {
         return a;
     }
 
-    private static boolean checkIP(int[][] a) {
+    public static int[][] add(int[][] a, int i, int j, int q) {
+        assert i >= 0 && i < a.length;
+        assert j >= 0 && j < a.length;
+        for (int k = 0; k < a[i].length; ++k) {
+            a[i][k] = (a[i][k] + a[j][k]) % q;
+        }
+        return a;
+    }
+
+    public static boolean checkIP(int[][] a) {
         assert a.length > 0;
         int k = a.length;
         for (int i = 0; i < k; ++i) {
@@ -68,7 +73,7 @@ public class Main {
         return true;
     }
 
-    private static boolean checkPI(int[][] a) {
+    public static boolean checkPI(int[][] a) {
         assert a.length > 0;
         int k = a.length;
         int n = a[0].length;
@@ -82,7 +87,7 @@ public class Main {
         return true;
     }
 
-    private static int[][] convert(int[][] a) {
+    public static int[][] convert(int[][] a) {
         if (checkIP(a)) {
             int k = a.length;
             int n = a[0].length;
@@ -116,19 +121,19 @@ public class Main {
         throw new IllegalStateException("Matrix must be in form");
     }
 
-    private static void print(int[][] a) {
+    public static void print(int[][] a) {
         for (int i = 0; i < a.length; ++i) {
             System.out.println(Arrays.toString(a[i]));
         }
     }
 
-    private static void print(Map<int[], int[]> a) {
+    public static void print(Map<int[], int[]> a) {
         for (Map.Entry<int[], int[]> entry : a.entrySet()) {
             System.out.println(Arrays.toString(entry.getKey()) + "=" + Arrays.toString(entry.getValue()));
         }
     }
 
-    private static int[][] transpose(int[][] a) {
+    public static int[][] transpose(int[][] a) {
         int k = a.length;
         assert a.length > 0;
         int n = a[0].length;
@@ -141,7 +146,7 @@ public class Main {
         return b;
     }
 
-    private static int[] mul(int[] v, int[][] a) {
+    public static int[] mul(int[] v, int[][] a) {
         assert v.length == a.length;
         int[] b = new int[a[0].length];
         for (int i = 0; i < a[0].length; ++i) {
@@ -153,7 +158,7 @@ public class Main {
         return b;
     }
 
-    private static int[] inc(int[] v) {
+    public static int[] inc(int[] v) {
         int c = 1;
         int[] b = new int[v.length];
         for (int i = v.length - 1; i >= 0; --i) {
@@ -165,7 +170,7 @@ public class Main {
         return b;
     }
 
-    private static int[][] words(int r) {
+    public static int[][] words(int r) {
         int[][] a = new int[1 << r][r];
         for (int i = 1; i < (1 << r); ++i) {
             a[i] = inc(a[i - 1]);
@@ -173,7 +178,7 @@ public class Main {
         return a;
     }
 
-    private static int w(int[] a) {
+    public static int w(int[] a) {
         int count = 0;
         for (int i = 0; i < a.length; ++i) {
             if (a[i] > 0) {
@@ -183,8 +188,11 @@ public class Main {
         return count;
     }
 
-    private static Map<int[], int[]> syndroms(int[][] h) {
+    public static Map<int[], int[]> syndroms(int[][] h) {
+        System.out.println("H = " + h.length + "x" + h[0].length);
         h = transpose(h);
+        print(h);
+        System.out.println("H^T = " + h.length + "x" + h[0].length);
         int r = h.length;
         int n = h[0].length;
         int[][] errs = words(r);
@@ -202,13 +210,91 @@ public class Main {
         return b;
     }
 
+    public static int b(int[] x) {
+        for (int i = 0; i < x.length; ++i) {
+            if (x[i] == 1) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public static int e(int[] x) {
+        for (int i = x.length - 1; i >= 0; i--) {
+            if (x[i] == 1) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public static boolean isPrime(int a) {
+        for (int i = 2; i < a; ++i) {
+            if (a % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static List<Integer> primes(int a) {
+        List<Integer> array = new ArrayList<>();
+        for (int i = 2; i < a; ++i) {
+            if (a % i == 0 && isPrime(i)) {
+                array.add(i);
+            }
+        }
+        return array;
+    }
+
+    public static int span(int[] x) {
+        return e(x) - b(x);
+    }
+
+    public static boolean checkMCF(int[][] x) {
+        Set<Integer> bb = new HashSet<>();
+        for (int i = 0; i < x.length; ++i) {
+            int cb = b(x[i]);
+            if (bb.contains(cb)) {
+                return false;
+            }
+            bb.add(cb);
+        }
+        return true;
+    }
+
     public static void main(String[] arg) {
-        int[][] a = {
+        /*int[][] a = {
                 {1, 1, 0, 1, 0, 0, 0, 1, 0, 0},
                 {1, 1, 0, 0, 1, 1, 0, 1, 1, 1},
                 {0, 1, 1, 0, 1, 1, 1, 1, 0, 0},
                 {0, 1, 0, 1, 0, 1, 1, 0, 0, 1}
         };/**/
+        /*int[][] a = {
+                {0, 1, 0, 1, 1, 0},
+                {1, 0, 1, 1, 0, 1},
+                {1, 1, 0, 1, 0, 0}
+        };*/
+        int[][] a = {
+                {1, 1, 0, 1, 0, 0},
+                {0, 1, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 1}
+        };
+        /*int[][] a = {
+                {1, 0, 1, 1, 0, 1},
+                {1, 0, 1, 0, 1, 0},
+                {1, 1, 0, 1, 0, 0}
+        };/**/
+        /*int[][] a = {
+                {1, 1, 0, 1, 0, 0},
+            {0, 1, 1, 1, 1, 0},
+            {0, 0, 0, 1, 1, 1}
+        };*/
+        /*int[][] a = {
+                {1, 1, 0, 0, 1, 1},
+                {0, 0, 1, 0, 1, 1},
+                {0, 1, 0, 1, 0, 1}
+        };*/
         /*int[][] a = {
                 {1, 0, 1, 0, 0, 1, 1, 0, 1, 1},
                 {0, 0, 1, 0, 1, 0, 1, 1, 1, 0},
@@ -227,17 +313,26 @@ public class Main {
         while (scanner.hasNext()) {
             String command = scanner.next();
             try {
-                switch (command) {
+                switch (command.toLowerCase()) {
                     case "swap": {
                         int i = Integer.parseInt(scanner.next());
                         int j = Integer.parseInt(scanner.next());
                         a = swap(a, i - 1, j - 1);
+                        print(a);
+                        break;
+                    }
+                    case "add": {
+                        int i = Integer.parseInt(scanner.next());
+                        int j = Integer.parseInt(scanner.next());
+                        a = add(a, i - 1, j - 1, 2);
+                        print(a);
                         break;
                     }
                     case "sub": {
                         int i = Integer.parseInt(scanner.next());
                         int j = Integer.parseInt(scanner.next());
                         a = sub(a, i - 1, j - 1, 2);
+                        print(a);
                         break;
                     }
                     case "speed": {
@@ -250,6 +345,7 @@ public class Main {
                     }
                     case "convert": {
                         a = convert(a);
+                        print(a);
                         break;
                     }
                     case "check": {
@@ -261,13 +357,29 @@ public class Main {
                         print(syndroms(a));
                         break;
                     }
+                    case "checkmcf": {
+                        System.out.println("Is in MCF ? -> " + checkMCF(a));
+                        break;
+                    }
+                    case "gen": {
+                        int[][] x = words(a.length);
+                        int[][] r = new int[x.length][a.length];
+                        print(x);
+                        for (int i = 0; i < x.length; ++i) {
+                            r[i] = mul(x[i], a);
+                        }
+                        //print(r);
+                        for (int i = 0; i < r.length; ++i) {
+                            System.out.println(Arrays.toString(r[i]) + " " + b(r[i]) + ", " + (e(r[i]) - 1));
+                        }
+                    }
                     case "exit": {
 
                         break;
                     }
                 }
 
-                print(a);
+                //print(a);
             } catch (Exception e) {
                 System.out.println("Wrong command");
                 e.printStackTrace();
